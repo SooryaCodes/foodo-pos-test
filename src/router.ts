@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { parse } from 'url';
 import { swaggerController } from './controllers/swagger.controller';
-import { itemController } from './controllers/itemController';
+import { itemController } from './controllers/item.controller';
 import { variantController } from './controllers/variantController';
 import {auditController} from './controllers/audit.controller';
 
