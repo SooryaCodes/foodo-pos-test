@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { parse } from 'url';
 import { swaggerController } from './controllers/swagger.controller';
 import { itemController } from './controllers/item.controller';
-import { variantController } from './controllers/variantController';
+import { variantController } from './controllers/variant.controller';
 import {auditController} from './controllers/audit.controller';
 
 export async function router(req: IncomingMessage, res: ServerResponse): Promise<void> {

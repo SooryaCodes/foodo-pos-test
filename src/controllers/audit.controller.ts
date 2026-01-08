@@ -1,7 +1,6 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getDB} from "../db/mongo";
 import {send} from "../utils/response";
-import { AuditLog } from "../types/audit";
 
 export async function auditController(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const db = getDB();
