@@ -6,7 +6,76 @@ import {getDB} from "../db/mongo";
 import{logAudit} from "./audit.helper";
 import {parseBody} from "../utils/bodyParser";
 
-
+/**
+ * @swagger
+ * /item:
+ *   post:
+ *     summary: Create a new item
+ *     tags: [Items]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Item'
+ *     responses:
+ *       201:
+ *         description: Item created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 acknowledged:
+ *                   type: boolean
+ *                 insertedId:
+ *                   type: string
+ *       400:
+ *         description: Invalid input
+ *
+ * /item/{id}:
+ *   put:
+ *     summary: Update an existing item
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Item ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               productCode:
+ *                 type: string
+ *               branchId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Item updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 updated:
+ *                   type: boolean
+ *       404:
+ *         description: Item not found
+ */
 export async function itemController(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const db = getDB();
 

@@ -6,6 +6,101 @@ import { getDB } from "../db/mongo";
 import { logAudit } from "./audit.helper";
 import { parseBody } from "../utils/bodyParser";
 
+/**
+ * @swagger
+ * /variants:
+ *   post:
+ *     summary: Create a new variant
+ *     tags: [Variants]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Variant'
+ *     responses:
+ *       201:
+ *         description: Variant created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 acknowledged:
+ *                   type: boolean
+ *                 insertedId:
+ *                   type: string
+ *       400:
+ *         description: Invalid input
+ *
+ * /variants/{id}:
+ *   put:
+ *     summary: Update an existing variant
+ *     tags: [Variants]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Variant ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               itemId:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               sellingPrice:
+ *                 type: number
+ *               costPrice:
+ *                 type: number
+ *               quantity:
+ *                 type: number
+ *               properties:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       200:
+ *         description: Variant updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 updated:
+ *                   type: boolean
+ *       404:
+ *         description: Variant not found
+ *   delete:
+ *     summary: Soft delete a variant
+ *     tags: [Variants]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Variant ID
+ *     responses:
+ *       200:
+ *         description: Variant deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 deleted:
+ *                   type: boolean
+ *       404:
+ *         description: Variant not found
+ */
 export async function variantController(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const db = getDB();
 

@@ -9,11 +9,25 @@ const PORT = Number(process.env.PORT) || 3000;
 
 const MONGO_URI = process.env.MONGO_URI as string;
 
+if (!MONGO_URI) {
+    console.error("MONGO_URI environment variable is not set");
+    process.exit(1);
+}
+
 const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
-    await connectDB(MONGO_URI);
     router(req, res);
 });
 
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+async function startServer() {
+    try {
+        await connectDB(MONGO_URI);
+        server.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error("Failed to connect to MongoDB:", error);
+        process.exit(1);
+    }
+}
+
+startServer();
