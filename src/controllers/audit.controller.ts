@@ -77,53 +77,61 @@ export async function auditController(
   req: IncomingMessage,
   res: ServerResponse
 ): Promise<void> {
-  const db = getDB();
-  const { query } = parse(req.url || "", true);
+  try {
+    const db = getDB();
+    const { query } = parse(req.url || "", true);
 
-  if (query.itemId) {
-    const variants = await db
-      .collection("variants")
-      .find({ itemId: query.itemId })
-      .project({ _id: 1 })
-      .toArray();
+    if (query.itemId) {
+      const variants = await db
+        .collection("variants")
+        .find({ itemId: query.itemId })
+        .project({ _id: 1 })
+        .toArray();
 
-    const variantIds = variants.map(v => v._id.toString());
+      const variantIds = variants.map(v => v._id.toString());
+
+      const logs = await db
+        .collection("audit_logs")
+        .find({
+          $or: [
+            { entityType: "ITEM", entityId: query.itemId },
+            {
+              entityType: "VARIANT",
+              entityId: { $in: variantIds }
+            }
+          ]
+        })
+        .sort({ timestamp: -1 })
+        .toArray();
+
+      return send(res, 200, logs);
+    }
+
+    if (query.variantId) {
+      const logs = await db
+        .collection("audit_logs")
+        .find({
+          entityType: "VARIANT",
+          entityId: query.variantId
+        })
+        .sort({ timestamp: -1 })
+        .toArray();
+
+      return send(res, 200, logs);
+    }
 
     const logs = await db
       .collection("audit_logs")
-      .find({
-        $or: [
-          { entityType: "ITEM", entityId: query.itemId },
-          {
-            entityType: "VARIANT",
-            entityId: { $in: variantIds }
-          }
-        ]
-      })
+      .find({})
       .sort({ timestamp: -1 })
       .toArray();
 
     return send(res, 200, logs);
+  } catch (error: any) {
+    console.error("Error in auditController:", error);
+    return send(res, 500, { 
+      message: "Internal server error", 
+      error: error.message 
+    });
   }
-
-  if (query.variantId) {
-    const logs = await db
-      .collection("audit_logs")
-      .find({
-        entityType: "VARIANT",
-        entityId: query.variantId
-      })
-      .sort({ timestamp: -1 })
-      .toArray();
-
-    return send(res, 200, logs);
-  }
-
-  const logs = await db
-    .collection("audit_logs")
-    .find({})
-    .sort({ timestamp: -1 })
-    .toArray();
-
-  return send(res, 200, logs);
 }
